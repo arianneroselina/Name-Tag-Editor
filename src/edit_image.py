@@ -1,9 +1,16 @@
-import csv
 import os
-
 from PIL import Image, ImageDraw, ImageFont
 
-basket_putra_key = "basket_putra"
+
+def write_names(design_path, output_path, basket_names):
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    edited_images = []
+    for basket_name in basket_names:
+        output_name = write_name(design_path, output_path, basket_name)
+        edited_images.append(output_name)
+    return edited_images
 
 
 def write_name(design_path, output_path, text):
@@ -38,9 +45,8 @@ def write_name(design_path, output_path, text):
     _, output_ext = os.path.splitext(design_path)
     output_filename = "name_tag_" + text + output_ext
 
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
     image.save(os.path.join(output_path, output_filename))
+    return output_filename
 
 
 def center_x_pos(draw, image, text, font):
@@ -85,36 +91,3 @@ def split_text(text, max_chars):
     if current_line:
         lines.append(current_line)
     return lines
-
-
-def extract_names(csv_file):
-    """
-    Read the given CSV file and extract the names
-    """
-    names = []
-    with open(csv_file, newline='') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            # check that the first column is empty
-            if row[0].strip() == "" and len(row) >= 2:
-                # extract the name from the second column
-                name = row[1].strip()
-                if name:
-                    names.append(name)
-    return names
-
-
-def main():
-    basket_csv_file = f"inputs/{basket_putra_key}.csv"
-    basket_names = extract_names(basket_csv_file)
-
-    design_path = "designs/name_tag.jpeg"
-    output_path = "outputs"
-
-    for basket_name in basket_names:
-        basket_output_path = os.path.join(output_path, basket_putra_key)
-        write_name(design_path, basket_output_path, basket_name)
-
-
-if __name__ == '__main__':
-    main()
