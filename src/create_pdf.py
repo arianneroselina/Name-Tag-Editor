@@ -2,6 +2,8 @@ import os
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 
+from src.constants import part_of_dict
+
 
 def create_pdf(image_paths, pdf_filename, image_width, image_height, positions):
     c = canvas.Canvas(pdf_filename, pagesize=A4)
@@ -12,7 +14,12 @@ def create_pdf(image_paths, pdf_filename, image_width, image_height, positions):
     c.save()
 
 
-def pack_images_in_pdf(image_folder, output_folder, image_size, cabor):
+def pack_images_in_pdf(image_folder, output_folder, image_size, key):
+    part_of = "COMMITTEES"
+    if key in part_of_dict:
+        part_of = part_of_dict[key]
+    print("Packing name tags of " + part_of + " in PDF files...")
+
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
@@ -37,7 +44,7 @@ def pack_images_in_pdf(image_folder, output_folder, image_size, cabor):
     for i in range(0, len(image_files), images_per_pdf):
         images_to_pack = [os.path.join(image_folder, image_files[j]) for j in
                           range(i, min(i + 4, len(image_files)))]
-        pdf_filename = os.path.join(output_folder, f"{cabor}_name_tags_{len(packed_pdfs) + 1}.pdf")
+        pdf_filename = os.path.join(output_folder, f"{key}_name_tags_{len(packed_pdfs) + 1}.pdf")
         create_pdf(images_to_pack, pdf_filename, image_width, image_height, positions)
         packed_pdfs.append(pdf_filename)
 

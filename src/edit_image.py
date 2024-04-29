@@ -1,45 +1,32 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
 
+from src.constants import part_of_dict
 
-def write_names(design_path, output_path, basket_names):
+
+def write_names(design_path, output_path, names, key):
+    print("Writing names and part ofs of " + part_of_dict[key] + " to the design...")
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
     edited_images = []
-    for basket_name in basket_names:
-        output_name = write_name(design_path, output_path, basket_name)
+    for name in names:
+        output_name = write_name_and_part_of(design_path, output_path, name, key)
         edited_images.append(output_name)
     return edited_images
 
 
-def write_name(design_path, output_path, text):
+def write_name_and_part_of(design_path, output_path, text, key):
     """
     Write a text to the image in the given path.
     """
     # open image
     image = Image.open(design_path)
-
-    # max 20 chars per line
-    max_chars_per_line = 18
-    text_lines = split_text(text, max_chars_per_line)
-
-    # define text style
-    font_style = "fonts/coolvetica rg.otf"
-    font_color = (50, 50, 50)
-    font_size = 43
-    font = ImageFont.truetype(font_style, font_size)
-
     draw = ImageDraw.Draw(image)
 
-    # center vertical position
-    y_pos = distribute_y_pos(325, 520, text_lines, font_size)
-
-    for i, line in enumerate(text_lines):
-        # center horizontal position
-        x_pos = center_x_pos(draw, image, line, font)
-        # add text to image
-        draw.text((x_pos, y_pos[i]), line, fill=font_color, font=font)
+    # write name
+    write_name(image, draw, text)
+    write_part_of(image, draw, key)
 
     # save modified image
     _, output_ext = os.path.splitext(design_path)
@@ -49,7 +36,50 @@ def write_name(design_path, output_path, text):
     return output_filename
 
 
-def center_x_pos(draw, image, text, font):
+def write_name(image, draw, name):
+    text_lines = split_text(name)
+
+    # define text style
+    font_style = "fonts/coolvetica rg.otf"
+    font_color = (50, 50, 50)
+    font_size = 43
+    font = ImageFont.truetype(font_style, font_size)
+
+    # center vertical position
+    y_pos = distribute_y_pos(325, 475, text_lines, font_size)
+
+    for i, line in enumerate(text_lines):
+        # center horizontal position
+        x_pos = center_x_pos(image, draw, line, font)
+        # add text to image
+        draw.text((x_pos, y_pos[i]), line, fill=font_color, font=font)
+
+
+def write_part_of(image, draw, key):
+    part_of_text = part_of_dict[key]
+
+    font_style = "fonts/coolvetica rg.otf"
+    font_color = (50, 50, 50)
+    font_size = 17
+    font = ImageFont.truetype(font_style, font_size)
+
+    line = "PART OF: " + part_of_text
+    x_pos = center_x_pos(image, draw, line, font)
+    y_pos = 495
+    draw.text((x_pos, y_pos), line, fill=font_color, font=font)
+
+
+def contains_many_m_or_w(word):
+    count = 0
+    for char in word:
+        if char.upper() in ['M', 'W']:
+            count += 1
+            if count == 3:
+                return True
+    return False
+
+
+def center_x_pos(image, draw, text, font):
     """
     Calculate center x position for the text to start at with the given image and font.
     """
@@ -75,19 +105,36 @@ def distribute_y_pos(y1, y2, text_lines, font_size):
     return y_positions
 
 
-def split_text(text, max_chars):
+def split_text(text):
     """
     Split text into lines with a maximum number of characters without breaking words.
     """
-    words = text.split()
+    # max 16 chars per line
+    max_chars = 16
     lines = []
     current_line = ""
-    for word in words:
+    line_count = 0
+
+    words = text.split()
+
+    for i, word in enumerate(words):
+        # m and w take a lot of space
+        if contains_many_m_or_w(word):
+            max_chars = max_chars - 3
+
+        # adjust max_chars for the second and third lines
+        if line_count == 1:
+            max_chars += 3
+        elif line_count == 2:
+            max_chars -= 3
+
         if len(current_line) + len(word) + 1 <= max_chars:
             current_line += " " + word if current_line else word
         else:
             lines.append(current_line)
             current_line = word
+            line_count += 1
+
     if current_line:
         lines.append(current_line)
     return lines

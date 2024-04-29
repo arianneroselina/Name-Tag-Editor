@@ -1,37 +1,70 @@
 import os
+import shutil
 
+from src.constants import pdf_key, cabor_keys, panitia_key, organisator_key, part_of_dict
 from src.create_pdf import pack_images_in_pdf
 from src.edit_image import write_names
-from src.read_csv import extract_names
-
-basket_putra_key = "basket_putra"
-bulu_tangkis_ganda_putra_key = "bulu_tangkis_ganda_putra"
-bulu_tangkis_ganda_campuran_key = "bulu_tangkis_ganda_campuran"
-futsal_key = "futsal"
-voli_key = "voli"
-
-pdf_key = "pdfs"
+from src.read_csv import extract_participant_names, extract_committee_names
 
 
 def main():
     wd = os.getcwd()
-    design_path = os.path.join(wd, "designs/name_tag.jpeg")
+    design_path = os.path.join(wd, "designs")
     output_path = os.path.join(wd, "outputs")
 
-    # basket putra
-    basket_input_path = os.path.join(wd, f"inputs/{basket_putra_key}.csv")
-    basket_img_output_path = os.path.join(output_path, basket_putra_key)
-    basket_pdf_output_path = os.path.join(output_path, basket_putra_key, pdf_key)
-    basket_names = extract_names(basket_input_path)
+    # clean output directory
+    shutil.rmtree(output_path)
 
-    # write names in images
-    edited_images = write_names(design_path, basket_img_output_path, basket_names)
-    print("Images edited: ", len(edited_images))
+    img_size = [95, 140]
+
+    print("Design path = " + design_path)
+    print("Output path = " + output_path)
+    print()
+
+    # participants
+    participants_design_path = os.path.join(design_path, "participants_name_tag.jpeg")
+    print("Starting to edit participants' name tags...")
+
+    for key in cabor_keys:
+        print("##################################################################")
+        input_path = os.path.join(wd, f"inputs\\{key}.csv")
+        img_output_path = os.path.join(output_path, key)
+        pdf_output_path = os.path.join(output_path, key, pdf_key)
+        participant_names = extract_participant_names(input_path, key)
+
+        # write names in images
+        edited_images = write_names(participants_design_path, img_output_path, participant_names, key)
+        print("Images edited: ", len(edited_images))
+
+        # put images in pdf
+        packed_pdfs = pack_images_in_pdf(img_output_path, pdf_output_path, img_size, key)
+        print("PDFs created: ", len(packed_pdfs))
+
+    print("##################################################################")
+    print()
+
+    # committees
+    committees_design_path = os.path.join(design_path, "committees_name_tag.jpeg")
+    print("Starting to edit committees' name tags...")
+
+    print("##################################################################")
+    key = panitia_key
+    input_path = os.path.join(wd, f"inputs\\{key}.csv")
+    img_output_path = os.path.join(output_path, key)
+    pdf_output_path = os.path.join(output_path, key, pdf_key)
+    committee_sie_and_names = extract_committee_names(input_path)
+
+    for sie in committee_sie_and_names.keys():
+        # write names in images
+        edited_images = write_names(committees_design_path, img_output_path, committee_sie_and_names[sie], sie)
+        print("Images edited: ", len(edited_images))
 
     # put images in pdf
-    img_size = [95, 140]
-    packed_pdfs = pack_images_in_pdf(basket_img_output_path, basket_pdf_output_path, img_size, basket_putra_key)
+    packed_pdfs = pack_images_in_pdf(img_output_path, pdf_output_path, img_size, key)
     print("PDFs created: ", len(packed_pdfs))
+
+    print("##################################################################")
+    print("Finished.")
 
 
 if __name__ == '__main__':
