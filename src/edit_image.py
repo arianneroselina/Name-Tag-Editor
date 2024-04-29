@@ -42,7 +42,7 @@ def write_name(image, draw, name):
     # define text style
     font_style = "fonts/coolvetica rg.otf"
     font_color = (50, 50, 50)
-    font_size = 43
+    font_size = 40
     font = ImageFont.truetype(font_style, font_size)
 
     # center vertical position
@@ -60,12 +60,12 @@ def write_part_of(image, draw, key):
 
     font_style = "fonts/coolvetica rg.otf"
     font_color = (50, 50, 50)
-    font_size = 17
+    font_size = 15
     font = ImageFont.truetype(font_style, font_size)
 
     line = "PART OF: " + part_of_text
     x_pos = center_x_pos(image, draw, line, font)
-    y_pos = 495
+    y_pos = 497
     draw.text((x_pos, y_pos), line, fill=font_color, font=font)
 
 
