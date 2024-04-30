@@ -5,11 +5,15 @@ bulu_tangkis_ganda_campuran_key = "bulu_tangkis_ganda_campuran"
 futsal_key = "futsal"
 voli_key = "voli"
 
-cabor_keys = [basket_putra_key, bulu_tangkis_ganda_putra_key, bulu_tangkis_ganda_campuran_key, futsal_key, voli_key]
+cabor_keys = [basket_putra_key, bulu_tangkis_ganda_campuran_key, bulu_tangkis_ganda_putra_key, futsal_key, voli_key]
 
-pdf_key = "pdfs"
+pdf_key = "pdf"
 
 panitia_key = "panitia"
+
+empty_key = "kosong"
+empty_participants_key = "kosong_peserta"
+empty_committees_key = "kosong_panitia"
 
 organisator_key = "Organisator"
 acara_key = "Acara"
@@ -56,4 +60,7 @@ part_of_dict = {
     "Wasit Futsal": wasit_key.upper(),
     "Wasit Voli": wasit_key.upper(),
     wasit_key: wasit_key.upper(),
+    empty_key: empty_key.upper(),
+    empty_participants_key: "EMPTY PARTICIPANTS",
+    empty_committees_key: "EMPTY COMMITTEES",
 }

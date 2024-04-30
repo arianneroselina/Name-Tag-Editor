@@ -28,6 +28,9 @@ def write_name_and_part_of(design_path, output_path, text, key):
     write_name(image, draw, text)
     write_part_of(image, draw, key)
 
+    # draw border
+    draw_border(image, draw)
+
     # save modified image
     _, output_ext = os.path.splitext(design_path)
     output_filename = "name_tag_" + text + output_ext
@@ -67,6 +70,20 @@ def write_part_of(image, draw, key):
     x_pos = center_x_pos(image, draw, line, font)
     y_pos = 497
     draw.text((x_pos, y_pos), line, fill=font_color, font=font)
+
+
+def draw_border(image, draw):
+    width, height = image.size
+    border_width = 1
+
+    # top border
+    draw.line([(0, 0), (width, 0)], fill="black", width=border_width)
+    # bottom border
+    draw.line([(0, height - border_width), (width, height - border_width)], fill="black", width=border_width)
+    # left border
+    draw.line([(0, 0), (0, height)], fill="black", width=border_width)
+    # right border
+    draw.line([(width - border_width, 0), (width - border_width, height)], fill="black", width=border_width)
 
 
 def contains_many_m_or_w(word):
