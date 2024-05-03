@@ -1,7 +1,8 @@
 import os
 import shutil
 
-from src.constants import pdf_key, cabor_keys, panitia_key, empty_key, empty_participants_key, empty_committees_key
+from src.constants import pdf_key, cabor_keys, panitia_key, empty_participants_key, empty_committees_key, \
+    bulu_tangkis_ganda_campuran_key
 from src.create_pdf import pack_images_in_pdf
 from src.edit_image import write_names
 from src.read_csv import extract_participant_names, extract_committee_names
@@ -24,6 +25,10 @@ def participants(participants_design_path):
         input_path = os.path.join(wd, f"inputs\\{key}.csv")
         img_output_path = os.path.join(output_path, key)
         participant_names = extract_participant_names(input_path, key)
+
+        # TODO: remove this if bulu tangkis ganda campuran is full, currently there are two empty slots
+        if key == bulu_tangkis_ganda_campuran_key:
+            participant_names.extend(["", ""])
 
         # write names in images
         edited_images = write_names(participants_design_path, img_output_path, participant_names, key)
@@ -76,7 +81,7 @@ def empty(participants_design_path, committees_design_path):
     print("Adding empty name tags...")
     print("##################################################################")
 
-    empty_images = 16
+    empty_images = 24
 
     empty_pdf_pages_1 = pack_images_in_pdf(participants_design_path, pdf_output_path, img_size, empty_participants_key)
     empty_pdf_pages_2 = pack_images_in_pdf(committees_design_path, pdf_output_path, img_size, empty_committees_key)
@@ -100,8 +105,9 @@ def main():
     # clean output directory
     shutil.rmtree(output_path)
 
-    participants_design_path = os.path.join(design_path, "participants_name_tag.jpeg")
-    committees_design_path = os.path.join(design_path, "committees_name_tag.jpeg")
+    # TODO: png is super slow! use jpeg for faster process
+    participants_design_path = os.path.join(design_path, "participants_name_tag.png")
+    committees_design_path = os.path.join(design_path, "committees_name_tag.png")
 
     # participants
     total_images, total_pdf_pages = participants(participants_design_path)

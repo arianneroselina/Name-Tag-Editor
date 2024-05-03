@@ -46,9 +46,9 @@ def pack_images_in_pdf(image_folder, output_folder, image_size, key):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    # print each 8 empty name tags for participants and committees
+    # print each 12 empty name tags for participants and committees
     if empty_key in key:
-        image_files = [image_folder] * 8
+        image_files = [image_folder] * 12
     else:
         # get the list of image files in the folder
         image_files = [f for f in os.listdir(image_folder) if f.endswith(('.jpg', '.jpeg', '.png'))]

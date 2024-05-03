@@ -10,7 +10,12 @@ def write_names(design_path, output_path, names, key):
         os.makedirs(output_path)
 
     edited_images = []
+    empty_text = 0
     for name in names:
+        # TODO: remove this if bulu tangkis ganda campuran is full
+        if name == "":
+            name = f"empty_{empty_text}"
+            empty_text = empty_text + 1
         output_name = write_name_and_part_of(design_path, output_path, name, key)
         edited_images.append(output_name)
     return edited_images
@@ -40,16 +45,20 @@ def write_name_and_part_of(design_path, output_path, text, key):
 
 
 def write_name(image, draw, name):
+    # TODO: remove this if bulu tangkis ganda campuran is full
+    if "empty" in name:
+        return
+
     text_lines = split_text(name)
 
     # define text style
     font_style = "fonts/coolvetica rg.otf"
     font_color = (50, 50, 50)
-    font_size = 40
+    font_size = 80
     font = ImageFont.truetype(font_style, font_size)
 
     # center vertical position
-    y_pos = distribute_y_pos(325, 475, text_lines, font_size)
+    y_pos = distribute_y_pos(750, 900, text_lines, font_size)
 
     for i, line in enumerate(text_lines):
         # center horizontal position
@@ -63,12 +72,12 @@ def write_part_of(image, draw, key):
 
     font_style = "fonts/coolvetica rg.otf"
     font_color = (50, 50, 50)
-    font_size = 15
+    font_size = 30
     font = ImageFont.truetype(font_style, font_size)
 
     line = "PART OF: " + part_of_text
     x_pos = center_x_pos(image, draw, line, font)
-    y_pos = 497
+    y_pos = 1000
     draw.text((x_pos, y_pos), line, fill=font_color, font=font)
 
 
@@ -102,7 +111,7 @@ def center_x_pos(image, draw, text, font):
     """
     _, _, text_width, text_height = draw.textbbox((0, 0), text, font=font)
     image_width, image_height = image.size
-    return (image_width - text_width) // 2
+    return ((image_width - text_width) // 2) + 5
 
 
 def distribute_y_pos(y1, y2, text_lines, font_size):
@@ -126,8 +135,8 @@ def split_text(text):
     """
     Split text into lines with a maximum number of characters without breaking words.
     """
-    # max 16 chars per line
-    max_chars = 16
+    # max 18 chars per line
+    max_chars = 18
     lines = []
     current_line = ""
     line_count = 0
