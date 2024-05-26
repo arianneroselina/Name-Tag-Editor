@@ -103,7 +103,8 @@ def main():
 
     print("Cleaning output directory..")
     # clean output directory
-    shutil.rmtree(output_path)
+    if os.path.exists(output_path):
+        shutil.rmtree(output_path)
 
     # TODO: png is super slow! use jpeg for faster process
     participants_design_path = os.path.join(design_path, "participants_name_tag.png")

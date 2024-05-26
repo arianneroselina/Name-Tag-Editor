@@ -15,7 +15,12 @@ empty_key = "kosong"
 empty_participants_key = "kosong_peserta"
 empty_committees_key = "kosong_panitia"
 
-organisator_key = "Organisator"
+ketua_ppi_frada_key = "Ketua PPI Frada"
+wakil_ketua_ppi_frada_key = "Wakil Ketua PPI Frada"
+ketua_pelaksana_key = "Ketua Pelaksana"
+bendahara_key = "Bendahara"
+sekretaris_key = "Sekretaris"
+
 acara_key = "Acara"
 konsumsi_key = "Konsumsi"
 pendaftaran_key = "Pendaftaran"
@@ -35,12 +40,11 @@ part_of_dict = {
     bulu_tangkis_ganda_campuran_key: "MIXED DOUBLE BADMINTON",
     futsal_key: "FUTSAL",
     voli_key: "VOLLEYBALL",
-    "Ketua PPI Frada": organisator_key.upper(),
-    "Wakil Ketua PPI Frada": organisator_key.upper(),
-    "Ketua Pelaksana": organisator_key.upper(),
-    "Bendahara": organisator_key.upper(),
-    "Sekretaris": organisator_key.upper(),
-    organisator_key: organisator_key.upper(),
+    ketua_ppi_frada_key: ketua_ppi_frada_key.upper(),
+    wakil_ketua_ppi_frada_key: wakil_ketua_ppi_frada_key.upper(),
+    ketua_pelaksana_key: ketua_pelaksana_key.upper(),
+    bendahara_key: bendahara_key.upper(),
+    sekretaris_key: sekretaris_key.upper(),
     acara_key: acara_key.upper(),
     konsumsi_key: konsumsi_key.upper(),
     pendaftaran_key: pendaftaran_key.upper(),
