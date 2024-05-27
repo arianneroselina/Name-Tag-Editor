@@ -4,107 +4,6 @@ from PIL import Image, ImageDraw, ImageFont
 from src.constants import part_of_dict
 
 
-def write_names(design_path, output_path, names, key):
-    print("Writing names and part ofs of " + part_of_dict[key] + " to the design...")
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-
-    edited_images = []
-    empty_text = 0
-    for name in names:
-        # TODO: remove this if bulu tangkis ganda campuran is full
-        if name == "":
-            name = f"empty_{empty_text}"
-            empty_text = empty_text + 1
-        output_name = write_name_and_part_of(design_path, output_path, name, key)
-        edited_images.append(output_name)
-    return edited_images
-
-
-def write_name_and_part_of(design_path, output_path, text, key):
-    """
-    Write a text to the image in the given path.
-    """
-    # open image
-    image = Image.open(design_path)
-    draw = ImageDraw.Draw(image)
-
-    # write name
-    write_name(image, draw, text)
-    write_part_of(image, draw, key)
-
-    # draw border
-    draw_border(image, draw)
-
-    # save modified image
-    _, output_ext = os.path.splitext(design_path)
-    output_filename = "name_tag_" + text + output_ext
-
-    image.save(os.path.join(output_path, output_filename))
-    return output_filename
-
-
-def write_name(image, draw, name):
-    # TODO: remove this if bulu tangkis ganda campuran is full
-    if "empty" in name:
-        return
-
-    text_lines = split_text(name)
-
-    # define text style
-    font_style = "fonts/coolvetica rg.otf"
-    font_color = (50, 50, 50)
-    font_size = 80
-    font = ImageFont.truetype(font_style, font_size)
-
-    # center vertical position
-    y_pos = distribute_y_pos(750, 900, text_lines, font_size)
-
-    for i, line in enumerate(text_lines):
-        # center horizontal position
-        x_pos = center_x_pos(image, draw, line, font)
-        # add text to image
-        draw.text((x_pos, y_pos[i]), line, fill=font_color, font=font)
-
-
-def write_part_of(image, draw, key):
-    part_of_text = part_of_dict[key]
-
-    font_style = "fonts/coolvetica rg.otf"
-    font_color = (50, 50, 50)
-    font_size = 30
-    font = ImageFont.truetype(font_style, font_size)
-
-    line = "PART OF: " + part_of_text
-    x_pos = center_x_pos(image, draw, line, font)
-    y_pos = 1000
-    draw.text((x_pos, y_pos), line, fill=font_color, font=font)
-
-
-def draw_border(image, draw):
-    width, height = image.size
-    border_width = 1
-
-    # top border
-    draw.line([(0, 0), (width, 0)], fill="black", width=border_width)
-    # bottom border
-    draw.line([(0, height - border_width), (width, height - border_width)], fill="black", width=border_width)
-    # left border
-    draw.line([(0, 0), (0, height)], fill="black", width=border_width)
-    # right border
-    draw.line([(width - border_width, 0), (width - border_width, height)], fill="black", width=border_width)
-
-
-def contains_many_m_or_w(word):
-    count = 0
-    for char in word:
-        if char.upper() in ['M', 'W']:
-            count += 1
-            if count == 3:
-                return True
-    return False
-
-
 def center_x_pos(image, draw, text, font):
     """
     Calculate center x position for the text to start at with the given image and font.
@@ -129,6 +28,30 @@ def distribute_y_pos(y1, y2, text_lines, font_size):
         current_y += font_size
 
     return y_positions
+
+
+def contains_many_m_or_w(word):
+    count = 0
+    for char in word:
+        if char.upper() in ['M', 'W']:
+            count += 1
+            if count == 3:
+                return True
+    return False
+
+
+def draw_border(image, draw):
+    width, height = image.size
+    border_width = 1
+
+    # top border
+    draw.line([(0, 0), (width, 0)], fill="black", width=border_width)
+    # bottom border
+    draw.line([(0, height - border_width), (width, height - border_width)], fill="black", width=border_width)
+    # left border
+    draw.line([(0, 0), (0, height)], fill="black", width=border_width)
+    # right border
+    draw.line([(width - border_width, 0), (width - border_width, height)], fill="black", width=border_width)
 
 
 def split_text(text):
@@ -164,3 +87,85 @@ def split_text(text):
     if current_line:
         lines.append(current_line)
     return lines
+
+
+class DesignWriter:
+    def __init__(self, design_path, output_path, names, key,
+                 font_style_name="fonts/coolvetica rg.otf", font_color_name=(50, 50, 50), font_size_name=80,
+                 font_style_part_of="fonts/coolvetica rg.otf", font_color_part_of=(50, 50, 50), font_size_part_of=30):
+        self.design_path = design_path
+        self.output_path = output_path
+        self.names = names
+        self.key = key
+        self.font_style_name = font_style_name
+        self.font_color_name = font_color_name
+        self.font_size_name = font_size_name
+        self.y_pos_name = [750, 900]
+        self.font_style_part_of = font_style_part_of
+        self.font_color_part_of = font_color_part_of
+        self.font_size_part_of = font_size_part_of
+        self.y_pos_part_of = 1000
+
+        if not os.path.exists(self.output_path):
+            os.makedirs(self.output_path)
+
+    def write_to_design(self):
+        print("Writing names and part ofs of " + part_of_dict[self.key] + " to the design...")
+
+        edited_images = []
+        empty_text = 0
+        for name in self.names:
+            # TODO: remove this if bulu tangkis ganda campuran is full
+            if name == "":
+                name = f"empty_{empty_text}"
+                empty_text = empty_text + 1
+            output_name = self.write_name_and_part_of(name)
+            edited_images.append(output_name)
+        return edited_images
+
+    def write_name_and_part_of(self, name):
+        """
+        Write a text to the image in the given path.
+        """
+        # open image
+        image = Image.open(self.design_path)
+        draw = ImageDraw.Draw(image)
+
+        # write name
+        self.write_name(image, draw, name)
+        self.write_part_of(image, draw)
+
+        # draw border
+        draw_border(image, draw)
+
+        # save modified image
+        _, output_ext = os.path.splitext(self.design_path)
+        output_filename = "name_tag_" + name + output_ext
+
+        image.save(os.path.join(self.output_path, output_filename))
+        return output_filename
+
+    def write_name(self, image, draw, name):
+        # TODO: remove this if bulu tangkis ganda campuran is full
+        if "empty" in name:
+            return
+
+        text_lines = split_text(name)
+        font = ImageFont.truetype(self.font_style_name, self.font_size_name)
+
+        # center vertical position
+        y_pos = distribute_y_pos(self.y_pos_name[0], self.y_pos_name[1], text_lines, self.font_size_name)
+
+        for i, line in enumerate(text_lines):
+            # center horizontal position
+            x_pos = center_x_pos(image, draw, line, font)
+            # add text to image
+            draw.text((x_pos, y_pos[i]), line, fill=self.font_color_name, font=font)
+
+    def write_part_of(self, image, draw):
+        part_of_text = part_of_dict[self.key]
+        line = "PART OF: " + part_of_text
+
+        font = ImageFont.truetype(self.font_style_part_of, self.font_size_part_of)
+        x_pos = center_x_pos(image, draw, line, font)
+        draw.text((x_pos, self.y_pos_part_of), line, fill=self.font_color_part_of, font=font)

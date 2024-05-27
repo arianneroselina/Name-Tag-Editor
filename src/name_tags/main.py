@@ -4,12 +4,12 @@ import shutil
 from src.constants import pdf_key, cabor_keys, panitia_key, empty_participants_key, empty_committees_key, \
     bulu_tangkis_ganda_campuran_key
 from src.create_pdf import pack_images_in_pdf
-from src.edit_image import write_names
+from src.edit_image import DesignWriter
 from src.read_csv import extract_participant_names, extract_committee_names
 
 wd = os.getcwd()
 design_path = os.path.join(wd, "designs")
-output_path = os.path.join(wd, "outputs")
+output_path = os.path.join(wd, "outputs/name_tags")
 pdf_output_path = os.path.join(output_path, pdf_key)
 img_size = [97, 136]
 
@@ -31,7 +31,8 @@ def participants(participants_design_path):
             participant_names.extend(["", ""])
 
         # write names in images
-        edited_images = write_names(participants_design_path, img_output_path, participant_names, key)
+        writer = DesignWriter(participants_design_path, img_output_path, participant_names, key)
+        edited_images = writer.write_to_design()
         print("Images edited: ", len(edited_images))
         participants_images = participants_images + len(edited_images)
 
@@ -61,7 +62,8 @@ def committees(committees_design_path):
 
     for sie in committee_sie_and_names.keys():
         # write names in images
-        edited_images = write_names(committees_design_path, img_output_path, committee_sie_and_names[sie], sie)
+        writer = DesignWriter(committees_design_path, img_output_path, committee_sie_and_names[sie], sie)
+        edited_images = writer.write_to_design()
         print("Images edited: ", len(edited_images))
         committees_images = committees_images + len(edited_images)
 
