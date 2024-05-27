@@ -1,7 +1,14 @@
 import os
+from enum import Enum
+
 from PIL import Image, ImageDraw, ImageFont
 
 from src.constants import part_of_dict
+
+
+class DesignType(Enum):
+    NAME_TAG = 1
+    CERTIFICATE = 2
 
 
 def center_x_pos(image, draw, text, font):
@@ -92,25 +99,33 @@ def split_text(text):
 class DesignWriter:
     def __init__(self, design_path, output_path, names, key,
                  font_style_name="fonts/coolvetica rg.otf", font_color_name=(50, 50, 50), font_size_name=80,
-                 font_style_part_of="fonts/coolvetica rg.otf", font_color_part_of=(50, 50, 50), font_size_part_of=30):
+                 y_pos_name=[750, 900], font_style_part_of="fonts/coolvetica rg.otf", font_color_part_of=(50, 50, 50),
+                 font_size_part_of=30, y_pos_part_of=1000):
         self.design_path = design_path
         self.output_path = output_path
+        self.design_type = DesignType.NAME_TAG
         self.names = names
         self.key = key
+        if self.key in part_of_dict:
+            self.part_of_text = part_of_dict[self.key]
+        else:
+            self.part_of_text = self.key.upper()
+
         self.font_style_name = font_style_name
         self.font_color_name = font_color_name
         self.font_size_name = font_size_name
-        self.y_pos_name = [750, 900]
+        self.y_pos_name = y_pos_name
         self.font_style_part_of = font_style_part_of
         self.font_color_part_of = font_color_part_of
         self.font_size_part_of = font_size_part_of
-        self.y_pos_part_of = 1000
+        self.y_pos_part_of = y_pos_part_of
 
         if not os.path.exists(self.output_path):
             os.makedirs(self.output_path)
 
-    def write_to_design(self):
-        print("Writing names and part ofs of " + part_of_dict[self.key] + " to the design...")
+    def write_to_design(self, design_type=DesignType.NAME_TAG):
+        print("Writing names and part ofs of " + self.part_of_text + " to the design...")
+        self.design_type = design_type
 
         edited_images = []
         empty_text = 0
@@ -140,7 +155,10 @@ class DesignWriter:
 
         # save modified image
         _, output_ext = os.path.splitext(self.design_path)
-        output_filename = "name_tag_" + name + output_ext
+        prefix = "certificate_"
+        if self.design_type == DesignType.NAME_TAG:
+            prefix = "name_tag_"
+        output_filename = prefix + name + output_ext
 
         image.save(os.path.join(self.output_path, output_filename))
         return output_filename
@@ -150,7 +168,9 @@ class DesignWriter:
         if "empty" in name:
             return
 
-        text_lines = split_text(name)
+        text_lines = [name]
+        if self.design_type == DesignType.NAME_TAG:
+            text_lines = split_text(name)
         font = ImageFont.truetype(self.font_style_name, self.font_size_name)
 
         # center vertical position
@@ -163,9 +183,9 @@ class DesignWriter:
             draw.text((x_pos, y_pos[i]), line, fill=self.font_color_name, font=font)
 
     def write_part_of(self, image, draw):
-        part_of_text = part_of_dict[self.key]
-        line = "PART OF: " + part_of_text
-
+        line = self.part_of_text
+        if self.design_type == DesignType.NAME_TAG:
+            line = "PART OF: " + line
         font = ImageFont.truetype(self.font_style_part_of, self.font_size_part_of)
         x_pos = center_x_pos(image, draw, line, font)
         draw.text((x_pos, self.y_pos_part_of), line, fill=self.font_color_part_of, font=font)

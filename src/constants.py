@@ -10,6 +10,7 @@ cabor_keys = [basket_putra_key, bulu_tangkis_ganda_campuran_key, bulu_tangkis_ga
 pdf_key = "pdf"
 
 panitia_key = "panitia"
+panitia_eng_key = "panitia_eng"
 
 empty_key = "kosong"
 empty_participants_key = "kosong_peserta"
@@ -40,25 +41,10 @@ part_of_dict = {
     bulu_tangkis_ganda_campuran_key: "MIXED DOUBLE BADMINTON",
     futsal_key: "FUTSAL",
     voli_key: "VOLLEYBALL",
-    ketua_ppi_frada_key: ketua_ppi_frada_key.upper(),
-    wakil_ketua_ppi_frada_key: wakil_ketua_ppi_frada_key.upper(),
-    ketua_pelaksana_key: ketua_pelaksana_key.upper(),
-    bendahara_key: bendahara_key.upper(),
-    sekretaris_key: sekretaris_key.upper(),
-    acara_key: acara_key.upper(),
-    konsumsi_key: konsumsi_key.upper(),
-    pendaftaran_key: pendaftaran_key.upper(),
-    publikasi_key: publikasi_key.upper(),
-    kesehatan_key: kesehatan_key.upper(),
-    perlengkapan_key: perlengkapan_key.upper(),
-    keamanan_key: keamanan_key.upper(),
     "Basket": lomba_key.upper(),
     "Badminton": lomba_key.upper(),
     "Futsal": lomba_key.upper(),
     "Voli": lomba_key.upper(),
-    kemitraan_key: kemitraan_key.upper(),
-    bazaar_key: bazaar_key.upper(),
-    medkom_key: medkom_key.upper(),
     "Wasit Basket": wasit_key.upper(),
     "Wasit Badminton": wasit_key.upper(),
     "Wasit Futsal": wasit_key.upper(),
